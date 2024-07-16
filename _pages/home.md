@@ -22,4 +22,4 @@ Feynman R., The theory of positrons. <i>Phys. Rev.</i> (1949)
 
 ### About me
 
-I am a Computer Engineer graduated from the Universidad Católica Argentina (UCA), currently working in the field of biology in Laboratory of Molecular Neurobiology (Prof. F. Barrantes, head), BIOMED UCA-CONICET. My work involves applying various techniques, including traditional methods and especially Deep Learning, for the analysis of the structure and dynamics of the acetylcholine neurotransmitter receptor (nAChR). Receptor's movement and positions is obtained through super-resolution microscopy methods like STORM and STED.
+I am a Computer Engineer graduated from Universidad Católica Argentina (UCA), currently working in the field of biology in Laboratory of Molecular Neurobiology (Prof. F. Barrantes, head), BIOMED UCA-CONICET. My work involves applying various techniques, including traditional methods and especially Deep Learning, for the analysis of the structure and dynamics of the acetylcholine neurotransmitter receptor (nAChR). Receptor's movement and positions is obtained through super-resolution microscopy methods like STORM and STED.

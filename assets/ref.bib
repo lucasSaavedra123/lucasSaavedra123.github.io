@@ -7,9 +7,7 @@
    pages = {22},
    abstract = {The cell-surface topography and density of nicotinic acetylcholine receptors (nAChRs) play a key functional role in the synapse. Here we employ in parallel two labeling and two super-resolution microscopy strategies to characterize the distribution of this receptor at the plasma membrane of the mammalian clonal cell line CHO-K1/A5. Cells were interrogated with two targeted techniques (confocal microscopy and stimulated emission depletion (STED) nanoscopy) and single-molecule nanoscopy (stochastic optical reconstruction microscopy, STORM) using the same fluorophore, Alexa Fluor 647, tagged onto either alpha-bungarotoxin (BTX) or the monoclonal antibody mAb35. Analysis of the topography of nanometer-sized aggregates ("nanoclusters") was carried out using STORMGraph, a quantitative clustering analysis for single-molecule localization microscopy based on graph theory and community detection, and ASTRICS, an inter-cluster similarity algorithm based on computational geometry. Antibody-induced crosslinking of receptors resulted in nanoclusters with a larger number of receptor molecules and higher densities than those observed in BTX-labeled samples. STORM and STED provided complementary information, STED rendering a direct map of the mesoscale nAChR distribution at distances ~10-times larger than the nanocluster centroid distances measured in STORM samples. By applying photon threshold filtering analysis, we show that it is also possible to detect the mesoscale organization in STORM images.},
    DOI = {10.3390/ijms231810435},
-   url = {
-    https://www.ncbi.nlm.nih.gov/pubmed/36142349
-    https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9499342/pdf/ijms-23-10435.pdf},
+   url = {https://doi.org/10.3390/ijms231810435},
    file = {ijms-23-10435-v2.pdf},
    year = {2022},
    type = {Journal Article}
@@ -28,4 +26,20 @@
    url = {http://dx.doi.org/10.1039/D4NR01944J},
    year = {2024},
    type = {Journal Article}
+}
+
+@misc{RN117,
+   author = {Barrantes, Francisco José and Mosqueira, Alejo and Buena-Maizón, Héctor and Saavedra, Lucas Ariel},
+   title = {The individual molecule and its tribe, the nanocluster: the case of the nicotinic acetylcholine receptor},
+   abstract = {Understanding synaptic function requires a detailed knowledge of the intervening molecular constituents. In the particular case of the peripheral cholinergic synapse (the neuromuscular junction), the nicotinic acetylcholine receptor (nAChR) plays a central role. We employ a combination of STED nanoscopy with single-molecule STORM superresolution localization microscopy to study the cell-surface topography and translational motion of this neurotransmitter receptor. At the single-track level, the free walks of an individual trajectory are transiently interrupted by confinement sojourns in small nanodomains (~50 nm radius), with millisecond-long lifetimes. The assembly of nAChR nanoclusters occurs in bursts lasting for seconds, separated by periods of cluster disassembly. The two dynamic processes occur in similar spatial scales, but in different time frames and with different cholesterol sensitivities. The ms-long confinement sojourns and the ms-long reversible nanoclustering affect all trajectories and determine the resulting macroscopic motional regime and the breadth of the heterogeneity in the ensemble population. The emerging picture is that the nAChR operates in a heterogeneous mixture of translational regimes: anomalous subdiffusive, Brownian and superdiffusive motions, and that these are subject to cholesterol modulation at the cell membrane.},
+   year = {2023},
+   type = {Conference Paper}
+}
+
+@misc{RN402,
+   author = {Saavedra, Lucas Ariel and Barrantes, Francisco José},
+   title = {Machine learning empowers static and dynamics clustering characterization of transmembrane receptors},
+   abstract = {Most membrane-embedded proteins are not homogeneously distributed across the plasma membrane but are present as a mixture of isolated units and clusters of several units. Various tools from the field of machine-learning (ML) have been developed to analyze these clusters individually, at variance with ensemble methods that describe them globally. Unfortunately, most of the ML cluster analysis methods rely on user-defined parameters which are difficult to set if no a priori information is available about the underlying clustering mechanisms. Here, we show two ML parameter-free computational methods applicable to the analysis of both static and dynamic topography of transmembrane proteins. For static data, a geometric approach based on alpha-shapes termed ASTRICS in combination with STORMGraph was employed to analyze static clusters of stimulated emission depletion (STED) and stochastic optical reconstruction (STORM) superresolution microscopy images, showing its applicability to image- and single-molecule-based approaches. For dynamic data, a deep-learning, non-Euclidean, and data-driven approach was employed to construct graphs from STORM and total internal reflection fluorescence (TIRF) microscopy single-molecule localization microscopy (SMLM) datasets to decode dynamic clustering. As a proof-of-concept application, both methods were tested to investigate the distribution of the nicotinic acetylcholine receptor (nAChR) macromolecule in a native membrane environment. Despite the limitations of automatic dynamic clustering analysis, the two approaches presented here find useful applications in the analysis of clusters in biological membranes.},
+   year = {2024},
+   type = {Conference Paper}
 }

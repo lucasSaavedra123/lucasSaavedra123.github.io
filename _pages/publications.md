@@ -23,6 +23,12 @@ years: [2016, 2017, 2018, 2019, 2020, 2021]
 
 <div class="jumbotron">
 <!--### Refereed journal articles-->
+### Preprints
+{% bibliography --query @preprint %}
+</div>
+
+<div class="jumbotron">
+<!--### Refereed journal articles-->
 ### Peer-reviewed journal articles
 {% bibliography --query @article %}
 </div>

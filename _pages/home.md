@@ -9,7 +9,7 @@ permalink: /
 
 The disruption of artificial intelligence in industry and science in this era signifies a historical shift for our civilization, enabling us to achieve goals that were once extremely challenging or even impossible without human intervention. Its speed and effectiveness not only aid us in accomplishing these objectives but also open new doors to discoveries that were unattainable through traditional methods. To achieve these advancements, the development of practical aspects in the field of AI is crucial.
 
-I am particularly interested in the <b>development</b> and <b>application</b> of AI to drive scientific discovery. My focus lies in the intersection of AI and neuroscience for two key reasons: (i) AI can significantly accelerate progress in neuroscience, enhancing both the precision and volume of insights we can obtain, and (ii) neuroscience and AI share a narrow "wall". By applying AI to understand the brain, we not only advance neuroscience but also gain critical insights into how to simulate the human brain: a long-term aspiration of artificial intelligence research.
+I am particularly interested in the <b>development</b> and <b>application</b> of AI to drive scientific discovery in life sciences. My focus lies in the intersection of AI and neuroscience for two key reasons: (i) AI can significantly accelerate progress in neuroscience, enhancing both the precision and volume of insights we can obtain, and (ii) neuroscience and AI share a narrow "wall". By applying AI to understand the brain, we not only advance neuroscience but also gain critical insights into how to simulate the human brain: a long-term aspiration of artificial intelligence research.
 
 <!-- <div class="container">
 <div class="row">

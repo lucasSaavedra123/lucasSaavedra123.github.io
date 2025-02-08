@@ -16,30 +16,20 @@ years: [2016, 2017, 2018, 2019, 2020, 2021]
 }
 </style>
 
-<!-- <div class="jumbotron">
-### Preprints
-{% bibliography --query @unpublished %}
-</div> -->
-
 <div class="jumbotron">
 <!--### Refereed journal articles-->
-### Preprints
-{% bibliography --query @preprint %}
+### Full-Length Publications in International Peer Reviewed Journals
+{% bibliography --query @article[keywords!=under_review] %}
 </div>
 
 <div class="jumbotron">
 <!--### Refereed journal articles-->
-### Peer-reviewed journal articles
-{% bibliography --query @article %}
+### Under review
+{% bibliography --query @article[keywords=under_review] %}
 </div>
 
 <div class="jumbotron">
 <!--### Refereed journal articles-->
-### Abstracts
-{% bibliography --query @misc %}
-</div>
-
-<!-- <div class="jumbotron">
-### Refereed conference proceedings
+### Presentations at International Conferences
 {% bibliography --query @inproceedings %}
-</div> -->
+</div>

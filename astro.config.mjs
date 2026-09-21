@@ -5,8 +5,7 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  // TODO: reemplazar por el dominio final cuando exista.
-  site: 'https://PLACEHOLDER-dominio-final.com',
+  site: 'https://lucassaavedra123.github.io',
   trailingSlash: 'never',
   integrations: [sitemap()],
   i18n: {

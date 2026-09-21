@@ -1,0 +1,348 @@
+---
+import { t, type Locale } from "../i18n/ui";
+import type { Publication } from "../lib/schema/publications.schema";
+import { groupByYear, groupBySection } from "../lib/publications";
+import PdfIcon from "./PdfIcon.astro";
+
+interface Props {
+  locale: Locale;
+  publications: Publication[];
+  scholarUrl?: string;
+}
+
+const { locale, publications, scholarUrl } = Astro.props;
+const sections = groupBySection(publications);
+
+const SECTION_LABEL_KEYS = {
+  journal: "publications.section.journal",
+  under_review: "publications.section.underReview",
+  conference: "publications.section.conference",
+} as const;
+---
+
+<div class="publications">
+  <header class="publications__header">
+    <h1>{t(locale, "nav.publications")}</h1>
+    {
+      scholarUrl && (
+        <a
+          class="btn scholar-badge"
+          href={scholarUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {t(locale, "publications.scholar.badge")}: —
+        </a>
+      )
+    }
+  </header>
+
+  <div class="publications__sections">
+    {
+      sections.map((sectionGroup) => (
+        <section class="publications__section">
+          <h2>{t(locale, SECTION_LABEL_KEYS[sectionGroup.section])}</h2>
+          <div class="publications__groups">
+            {groupByYear(sectionGroup.publications).map((group) => (
+              <section class="publications__year-group">
+                <h3>{group.year || "—"}</h3>
+                <ul class="publications__list">
+                  {group.publications.map((publication) => (
+                    <li class="publication" data-publication>
+                      <span class="publication__venue">
+                        {publication.venue} · {publication.year}
+                      </span>
+                      <p class="publication__title">
+                        {publication.doi || publication.url ? (
+                          <a
+                            href={
+                              publication.doi
+                                ? `https://doi.org/${publication.doi}`
+                                : publication.url
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {publication.title}
+                          </a>
+                        ) : (
+                          publication.title
+                        )}
+                      </p>
+                      {publication.authors.length > 0 && (
+                        <p class="publication__authors">
+                          {publication.authors
+                            .map((author, index) =>
+                              publication.equalContribIndexes.includes(index + 1)
+                                ? `${author}*`
+                                : author
+                            )
+                            .join(", ")}
+                        </p>
+                      )}
+                      <div class="publication__actions">
+                        {publication.abstract ? (
+                          <button
+                            type="button"
+                            class="btn"
+                            data-panel-toggle
+                            aria-expanded="false"
+                            aria-controls={`abstract-${publication.key}`}
+                          >
+                            {t(locale, "publications.action.abstract")}
+                          </button>
+                        ) : (
+                          <button type="button" class="btn btn--disabled" disabled aria-disabled="true">
+                            {t(locale, "publications.action.abstract")}
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          class="btn"
+                          data-panel-toggle
+                          aria-expanded="false"
+                          aria-controls={`bibtex-${publication.key}`}
+                        >
+                          {t(locale, "publications.action.bibtex")}
+                        </button>
+                        {publication.doi ? (
+                          <button
+                            type="button"
+                            class="btn"
+                            data-panel-toggle
+                            aria-expanded="false"
+                            aria-controls={`doi-${publication.key}`}
+                          >
+                            {t(locale, "publications.action.doi")}
+                          </button>
+                        ) : (
+                          <span class="btn btn--disabled" aria-disabled="true">
+                            {t(locale, "publications.action.doi")}
+                          </span>
+                        )}
+                        {publication.url ? (
+                          <a
+                            class="btn"
+                            href={publication.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {t(locale, "publications.action.website")}
+                          </a>
+                        ) : (
+                          <span class="btn btn--disabled" aria-disabled="true">
+                            {t(locale, "publications.action.website")}
+                          </span>
+                        )}
+                        {publication.pdfUrl ? (
+                          <a
+                            class="btn"
+                            href={publication.pdfUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <PdfIcon />
+                            {t(locale, "publications.action.pdf")}
+                          </a>
+                        ) : (
+                          <span class="btn btn--disabled" aria-disabled="true">
+                            <PdfIcon />
+                            {t(locale, "publications.action.pdf")}
+                          </span>
+                        )}
+                      </div>
+                      {publication.abstract && (
+                        <p class="publication__panel" id={`abstract-${publication.key}`} hidden>
+                          {publication.abstract}
+                        </p>
+                      )}
+                      <div class="publication__panel" id={`bibtex-${publication.key}`} hidden>
+                        <pre class="publication__panel-text publication__panel-text--code">{publication.bibtex}</pre>
+                        <button
+                          type="button"
+                          class="btn btn--copy"
+                          data-copy-btn
+                          data-copy-label={t(locale, "publications.action.copy")}
+                          data-copied-label={t(locale, "publications.action.copied")}
+                        >
+                          {t(locale, "publications.action.copy")}
+                        </button>
+                      </div>
+                      {publication.doi && (
+                        <div class="publication__panel" id={`doi-${publication.key}`} hidden>
+                          <p class="publication__panel-text">{publication.doi}</p>
+                          <button
+                            type="button"
+                            class="btn btn--copy"
+                            data-copy-btn
+                            data-copy-label={t(locale, "publications.action.copy")}
+                            data-copied-label={t(locale, "publications.action.copied")}
+                          >
+                            {t(locale, "publications.action.copy")}
+                          </button>
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll("[data-panel-toggle]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const targetId = button.getAttribute("aria-controls");
+      const panel = targetId ? document.getElementById(targetId) : null;
+      if (!(panel instanceof HTMLElement)) return;
+      panel.hidden = !panel.hidden;
+      button.setAttribute("aria-expanded", String(!panel.hidden));
+    });
+  });
+
+  document.querySelectorAll("[data-copy-btn]").forEach((button) => {
+    const text = button.parentElement?.querySelector(".publication__panel-text")?.textContent ?? "";
+    button.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(text.trim());
+      } catch {
+        return;
+      }
+      const copyLabel = button.getAttribute("data-copy-label") ?? "";
+      const copiedLabel = button.getAttribute("data-copied-label") ?? "";
+      button.textContent = copiedLabel;
+      window.setTimeout(() => {
+        button.textContent = copyLabel;
+      }, 1500);
+    });
+  });
+</script>
+
+<style>
+  .publications {
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: 3rem 1.25rem;
+  }
+
+  .publications__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .publications__header h1 {
+    margin: 0;
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+  }
+
+  .scholar-badge {
+    background: var(--bg-surface);
+  }
+
+  .publications__section {
+    margin-bottom: 3rem;
+  }
+
+  .publications__section h2 {
+    font-size: 1.15rem;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 0.6rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .publications__year-group {
+    margin-bottom: 2rem;
+  }
+
+  .publications__year-group h3 {
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    font-size: 1rem;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .publications__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .publication {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+  }
+
+  .publication__venue {
+    display: block;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .publication__title {
+    margin: 0 0 0.35rem;
+    font-weight: 600;
+  }
+
+  .publication__authors {
+    margin: 0 0 0.75rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .publication__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .publication__actions .btn {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .publication__panel {
+    margin: 0.75rem 0 0;
+    padding: 0.85rem 1rem;
+    border-radius: 0.5rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    backdrop-filter: blur(var(--glass-blur));
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .publication__panel-text {
+    margin: 0 0 0.75rem;
+  }
+
+  .publication__panel-text--code {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .btn--copy {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.75rem;
+  }
+</style>

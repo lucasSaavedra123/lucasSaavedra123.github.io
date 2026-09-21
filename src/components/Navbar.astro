@@ -1,0 +1,308 @@
+---
+import { t, type Locale } from "../i18n/ui";
+import type { Metadata } from "../lib/schema/metadata.schema";
+import ThemeToggle from "./ThemeToggle.astro";
+import LanguageSwitcher from "./LanguageSwitcher.astro";
+
+interface Props {
+  locale: Locale;
+  metadata: Metadata;
+}
+
+const { locale } = Astro.props;
+const currentPath = Astro.url.pathname;
+
+// El link de Blog apunta afuera (Substack), el resto son rutas internas que
+// todavía no existen como páginas (se construyen en fases futuras) — 404-earán
+// hasta entonces, lo cual es esperado en esta etapa (ver plan.md, Navbar).
+const navLinks = [
+  { href: "/", label: t(locale, "nav.home") },
+  { href: "/about", label: t(locale, "nav.about") },
+  { href: "/cv", label: t(locale, "nav.cv") },
+  { href: "/publications", label: t(locale, "nav.publications") },
+  {
+    href: "https://example.substack.com",
+    label: t(locale, "nav.blog"),
+    external: true,
+  },
+  { href: "/news", label: t(locale, "nav.news") },
+  { href: "/contact", label: t(locale, "nav.contact") },
+];
+---
+
+<header class="navbar" id="navbar">
+  <nav class="navbar__inner">
+    <a href="/" class="brand-link">
+      Lucas{" "}
+      <span class="middle-name" aria-hidden="true">
+        <span class="stem">A</span><span class="dot">.</span><span class="rest">riel</span>
+      </span>
+      <span class="sr-only">Ariel</span>{" "}
+      Saavedra
+    </a>
+
+    <button
+      type="button"
+      class="menu-toggle"
+      id="menu-toggle"
+      aria-expanded="false"
+      aria-controls="nav-links"
+      aria-label="Toggle navigation menu"
+    >
+      <span class="menu-toggle__bar"></span>
+      <span class="menu-toggle__bar"></span>
+      <span class="menu-toggle__bar"></span>
+    </button>
+
+    <div class="nav-links" id="nav-links">
+      <ul>
+        {
+          navLinks.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class="nav-link"
+                data-label={link.label}
+                aria-current={currentPath === link.href ? "page" : undefined}
+                target={link.external ? "_blank" : undefined}
+                rel={link.external ? "noopener noreferrer" : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="nav-controls">
+        <ThemeToggle locale={locale} />
+        <LanguageSwitcher locale={locale} />
+      </div>
+    </div>
+  </nav>
+</header>
+
+<script>
+  const navbar = document.getElementById("navbar");
+  const menuToggle = document.getElementById("menu-toggle");
+  const navLinksEl = document.getElementById("nav-links");
+
+  let ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      navbar?.classList.toggle("scrolled", window.scrollY > 8);
+      ticking = false;
+    });
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  menuToggle?.addEventListener("click", () => {
+    const isOpen = navLinksEl?.classList.toggle("open") ?? false;
+    menuToggle.setAttribute("aria-expanded", String(isOpen));
+  });
+</script>
+
+<style>
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--bg-base);
+    border-bottom: 1px solid transparent;
+  }
+
+  .navbar.scrolled {
+    background: var(--glass-bg);
+    border-bottom-color: var(--glass-border);
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    backdrop-filter: blur(var(--glass-blur));
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .navbar {
+      transition: background-color 0.2s ease, backdrop-filter 0.2s ease;
+    }
+  }
+
+  .navbar__inner {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .brand-link {
+    position: relative;
+    font-weight: 700;
+    text-decoration: none;
+    color: var(--text-primary);
+  }
+
+  .brand-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .brand-link:hover::after,
+  .brand-link:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .brand-link::after {
+      transition: transform 0.25s ease;
+    }
+  }
+
+  .brand-link:hover .middle-name .dot,
+  .brand-link:focus-visible .middle-name .dot {
+    max-width: 0;
+  }
+
+  .brand-link:hover .middle-name .rest,
+  .brand-link:focus-visible .middle-name .rest {
+    max-width: 5ch;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .middle-name .dot,
+    .middle-name .rest {
+      transition: max-width 0.6s ease;
+    }
+  }
+
+  .menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.4rem;
+  }
+
+  .menu-toggle__bar {
+    width: 22px;
+    height: 2px;
+    background: var(--text-primary);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .nav-links ul {
+    list-style: none;
+    display: flex;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-link {
+    position: relative;
+    display: inline-block;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.95rem;
+  }
+
+  /*
+   * Reserva el ancho de la variante bold (invisible, altura 0) para que
+   * pasar a font-weight: 700 en hover/focus/seleccionado no corra los
+   * demás items del menú.
+   */
+  .nav-link::before {
+    content: attr(data-label);
+    display: block;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    font-weight: 700;
+  }
+
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .nav-link:hover::after,
+  .nav-link:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .nav-link::after {
+      transition: transform 0.25s ease;
+    }
+  }
+
+  .nav-link:hover,
+  .nav-link:focus-visible,
+  .nav-link[aria-current="page"] {
+    font-weight: 700;
+  }
+
+  .nav-link[aria-current="page"] {
+    color: var(--accent-warn);
+  }
+
+  .nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  @media (max-width: 720px) {
+    .menu-toggle {
+      display: flex;
+    }
+
+    .nav-links {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1rem 1.25rem 1.5rem;
+      background: var(--glass-bg);
+      border-bottom: 1px solid var(--glass-border);
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      backdrop-filter: blur(var(--glass-blur));
+      display: none;
+    }
+
+    .nav-links.open {
+      display: flex;
+    }
+
+    .nav-links ul {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  }
+</style>

@@ -1,0 +1,13 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Contact from "../components/Contact.astro";
+import { loadMetadata } from "../lib/metadata";
+import { defaultLocale, t } from "../i18n/ui";
+
+const metadata = loadMetadata(defaultLocale);
+const title = `${t(defaultLocale, "nav.contact")} — ${metadata.personal.display_name}`;
+---
+
+<BaseLayout title={title} description={metadata.summary.short}>
+  <Contact metadata={metadata} locale={defaultLocale} />
+</BaseLayout>

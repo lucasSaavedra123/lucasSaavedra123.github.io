@@ -1,0 +1,93 @@
+---
+// Landing interina "Bajo construcción" (ver plan.md, Fase 9.5): reemplaza
+// temporalmente la Home completa en "/" mientras las Fases 9 (revisión de
+// estilo) y 10 (contenido real) siguen en curso. Página única, sin
+// Navbar/Footer/i18n/toggle de tema/analíticas — se restaura la Home
+// (movida a src/pages/home.astro) una vez terminadas esas fases.
+import "../styles/tokens.css";
+import "../styles/fonts.css";
+import "../styles/global.css";
+import PdfIcon from "../components/PdfIcon.astro";
+import { loadMetadata } from "../lib/metadata";
+import { defaultLocale } from "../i18n/ui";
+
+const metadata = loadMetadata(defaultLocale);
+const title = `${metadata.personal.display_name} — Under construction`;
+
+// Hardcodeadas acá a propósito, no en la metadata (decisión del usuario):
+// son URLs externas de redirección (no un archivo local a descargar) y
+// específicas de esta landing interina — TODO: reemplazar por las URLs
+// reales cuando el usuario las suba (ver plan.md, "Contenido a completar").
+const CV_URL = "https://tinyurl.com/3z2wxzbm";
+const RESEARCH_INTERESTS_URL = "https://tinyurl.com/mtutfvdf";
+---
+
+<!doctype html>
+<html lang={defaultLocale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta
+      name="description"
+      content="This site is under construction. In the meantime, check out the CV and Research Interests."
+    />
+  </head>
+  <body>
+    <main class="construction">
+      <h1>Under construction</h1>
+      <p>This site is under construction. In the meantime:</p>
+      <div class="construction__links">
+        <a
+          class="btn btn--primary"
+          href={CV_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <PdfIcon />
+          CV
+        </a>
+        <a
+          class="btn btn--primary"
+          href={RESEARCH_INTERESTS_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <PdfIcon />
+          Research Interests
+        </a>
+      </div>
+    </main>
+  </body>
+</html>
+
+<style>
+  .construction {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    text-align: center;
+    padding: 1.5rem;
+  }
+
+  .construction h1 {
+    margin: 0;
+  }
+
+  .construction p {
+    margin: 0;
+    color: var(--text-muted);
+  }
+
+  .construction__links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+</style>

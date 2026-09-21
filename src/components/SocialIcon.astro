@@ -1,0 +1,23 @@
+---
+import { SOCIAL_ICONS } from "../icons/social";
+import type { SocialPlatformKey } from "../lib/schema/metadata.schema";
+
+interface Props {
+  platform: SocialPlatformKey;
+}
+
+const { platform } = Astro.props;
+const icon = SOCIAL_ICONS[platform];
+---
+
+<svg class="social-icon" viewBox={icon.viewBox} aria-hidden="true" focusable="false">
+  <path d={icon.path} fill="currentColor" />
+</svg>
+
+<style>
+  .social-icon {
+    width: 1.15em;
+    height: 1.15em;
+    display: block;
+  }
+</style>

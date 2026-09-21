@@ -1,0 +1,319 @@
+---
+import { t, type Locale } from "../i18n/ui";
+import type { Metadata } from "../lib/schema/metadata.schema";
+import PdfIcon from "./PdfIcon.astro";
+
+interface Props {
+  locale: Locale;
+  metadata: Metadata;
+}
+
+const { locale, metadata } = Astro.props;
+const roleLabel = metadata.personal.roles.join(" / ");
+const site = Astro.site;
+
+function formatYear(value: string): string {
+  return value.toLowerCase() === "present" ? "Present" : value.slice(0, 4);
+}
+
+const sections = [
+  { id: "contact", label: t(locale, "cv.section.contact") },
+  { id: "summary", label: t(locale, "cv.section.summary") },
+  { id: "education", label: t(locale, "cv.section.education") },
+  { id: "experience", label: t(locale, "cv.section.experience") },
+  { id: "skills", label: t(locale, "cv.section.skills") },
+  { id: "courses", label: t(locale, "cv.section.courses") },
+  { id: "interests", label: t(locale, "cv.section.interests") },
+];
+---
+
+<div class="cv">
+  <header class="cv__header">
+    <div>
+      <h1>{metadata.personal.display_name}</h1>
+      {roleLabel && <p class="role">{roleLabel}</p>}
+    </div>
+    <div class="cv__downloads">
+      <a class="btn btn--primary" href={metadata.cv_pdf_url} download>
+        <PdfIcon />
+        {t(locale, "cv.download.cv")}
+      </a>
+      <a class="btn btn--primary" href={metadata.resume_pdf_url} download>
+        <PdfIcon />
+        {t(locale, "cv.download.resume")}
+      </a>
+    </div>
+  </header>
+
+  <nav class="cv__toc" aria-label={t(locale, "nav.cv")}>
+    <ul>
+      {
+        sections.map((section) => (
+          <li>
+            <a href={`#${section.id}`}>{section.label}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <section id="contact" class="cv__section">
+    <h2>{t(locale, "cv.section.contact")}</h2>
+    <ul class="contact-list">
+      <li>{metadata.personal.full_name}</li>
+      {
+        metadata.contact.emails.map((email) => (
+          <li>
+            <a href={`mailto:${email.address}`}>
+              {email.label}: {email.address}
+            </a>
+          </li>
+        ))
+      }
+      {metadata.contact.phone && <li>{metadata.contact.phone}</li>}
+      <li>{metadata.personal.location}</li>
+      {
+        site && (
+          <li>
+            <a href={site.toString()} target="_blank" rel="noopener noreferrer">
+              {site.toString()}
+            </a>
+          </li>
+        )
+      }
+    </ul>
+  </section>
+
+  <section id="summary" class="cv__section">
+    <h2>{t(locale, "cv.section.summary")}</h2>
+    <p>{metadata.summary.full}</p>
+  </section>
+
+  <section id="education" class="cv__section">
+    <h2>{t(locale, "cv.section.education")}</h2>
+    <ul class="timeline">
+      {
+        metadata.education.map((entry) => (
+          <li class="timeline__entry">
+            <span class="timeline__date">
+              {formatYear(entry.start_date)} – {formatYear(entry.end_date)}
+            </span>
+            <div class="timeline__content">
+              <p class="timeline__title">{entry.degree}</p>
+              <p class="timeline__subtitle">
+                {entry.institution} · {entry.location}
+              </p>
+              {entry.highlights.length > 0 && (
+                <ul class="timeline__highlights">
+                  {entry.highlights.map((highlight) => <li>{highlight}</li>)}
+                </ul>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section id="experience" class="cv__section">
+    <h2>{t(locale, "cv.section.experience")}</h2>
+    <ul class="timeline">
+      {
+        metadata.experience.map((entry) => (
+          <li class="timeline__entry">
+            <span class="timeline__date">
+              {formatYear(entry.start_date)} – {formatYear(entry.end_date)}
+            </span>
+            <div class="timeline__content">
+              <p class="timeline__title">{entry.role}</p>
+              <p class="timeline__subtitle">
+                {entry.organization} · {entry.location}
+              </p>
+              {entry.highlights.length > 0 && (
+                <ul class="timeline__highlights">
+                  {entry.highlights.map((highlight) => <li>{highlight}</li>)}
+                </ul>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section id="skills" class="cv__section">
+    <h2>{t(locale, "cv.section.skills")}</h2>
+    <div class="skills-grid">
+      {
+        metadata.skills.map((group) => (
+          <div class="skills-group">
+            <h3>{group.category}</h3>
+            <ul class="chip-list">
+              {group.items.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section id="courses" class="cv__section">
+    <h2>{t(locale, "cv.section.courses")}</h2>
+    <ul class="courses-list">
+      {
+        metadata.courses.map((course) => (
+          <li>
+            <span class="courses-list__date">{course.date}</span>
+            {course.name} — {course.institution}
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section id="interests" class="cv__section">
+    <h2>{t(locale, "cv.section.interests")}</h2>
+    <ul class="chip-list">
+      {metadata.interests.map((interest) => <li>{interest}</li>)}
+    </ul>
+  </section>
+</div>
+
+<style>
+  .cv {
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: 3rem 1.25rem;
+  }
+
+  .cv__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .cv__downloads {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .cv__header h1 {
+    margin: 0 0 0.25rem;
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+  }
+
+  .role {
+    margin: 0;
+    color: var(--text-muted);
+  }
+
+  .cv__toc {
+    margin-bottom: 2.5rem;
+  }
+
+  .cv__toc ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html) {
+      scroll-behavior: smooth;
+    }
+  }
+
+  .cv__section {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    scroll-margin-top: 5rem;
+  }
+
+  .cv__section h2 {
+    margin: 0 0 1rem;
+    font-size: 1.15rem;
+  }
+
+  .contact-list,
+  .courses-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .courses-list__date {
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    margin-right: 0.5rem;
+  }
+
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .timeline__entry {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 560px) {
+    .timeline__entry {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
+  }
+
+  .timeline__date {
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  .timeline__title {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .timeline__subtitle {
+    margin: 0.15rem 0 0.5rem;
+    color: var(--text-muted);
+  }
+
+  .timeline__highlights {
+    margin: 0;
+    padding-left: 1.1rem;
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: 1.25rem;
+  }
+
+  .skills-group h3 {
+    margin: 0 0 0.5rem;
+    font-size: 0.95rem;
+  }
+</style>

@@ -1,0 +1,184 @@
+---
+import { t, type Locale } from "../i18n/ui";
+import type { Metadata } from "../lib/schema/metadata.schema";
+import { socialLabel } from "../icons/social";
+import SocialIcon from "./SocialIcon.astro";
+
+interface Props {
+  locale: Locale;
+  metadata: Metadata;
+}
+
+const { locale, metadata } = Astro.props;
+const roleLabel = metadata.personal.roles.join(" / ");
+---
+
+<section class="hero">
+  <div class="hero__text">
+    {roleLabel && <p class="eyebrow">{roleLabel}</p>}
+
+    <h1 class="hero__name">
+      Lucas{" "}
+      <span class="middle-name" aria-hidden="true">
+        <span class="stem">A</span><span class="dot">.</span><span class="rest">riel</span>
+      </span>
+      <span class="sr-only">Ariel</span>{" "}
+      Saavedra
+    </h1>
+
+    <p class="description">{metadata.summary.short}</p>
+
+    <div class="cta-row">
+      <a class="btn btn--primary" href="/cv">
+        {t(locale, "hero.cta.resume")}
+      </a>
+      {
+        metadata.contact.emails.map((email) => (
+          <a class="btn" href={`mailto:${email.address}`}>
+            {email.label}
+          </a>
+        ))
+      }
+      {
+        metadata.social.map((entry) => (
+          <a
+            class="btn btn--icon"
+            href={entry.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={socialLabel(entry.platform)}
+            title={socialLabel(entry.platform)}
+          >
+            <SocialIcon platform={entry.platform} />
+          </a>
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="hero__photo">
+    <div class="photo-backdrop" aria-hidden="true"></div>
+    <img
+      class="photo"
+      src={metadata.personal.photo_url}
+      alt={metadata.personal.display_name}
+      width="320"
+      height="320"
+    />
+  </div>
+</section>
+
+<style>
+  .hero {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 3rem 1.25rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  @media (min-width: 860px) {
+    .hero {
+      grid-template-columns: 3fr 2fr;
+    }
+  }
+
+  .eyebrow {
+    margin: 0 0 0.5rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.85rem;
+  }
+
+  .hero__name {
+    position: relative;
+    display: inline-block;
+    margin: 0 0 1rem;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    line-height: 1.1;
+  }
+
+  .hero__name::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 100%;
+    height: 3px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .hero__name:hover::after,
+  .hero__name:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__name::after {
+      transition: transform 0.3s ease;
+    }
+  }
+
+  .hero__name:hover .middle-name .dot,
+  .hero__name:focus-visible .middle-name .dot {
+    max-width: 0;
+  }
+
+  .hero__name:hover .middle-name .rest,
+  .hero__name:focus-visible .middle-name .rest {
+    max-width: 5ch;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .middle-name .dot,
+    .middle-name .rest {
+      transition: max-width 0.6s ease;
+    }
+  }
+
+  .description {
+    max-width: 42rem;
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .hero__photo {
+    position: relative;
+    justify-self: center;
+    width: min(100%, 320px);
+    aspect-ratio: 1 / 1;
+  }
+
+  .photo-backdrop {
+    position: absolute;
+    inset: -1rem;
+    border-radius: 1.5rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    backdrop-filter: blur(var(--glass-blur));
+    transform: rotate(-4deg);
+  }
+
+  .photo {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 1.25rem;
+  }
+</style>

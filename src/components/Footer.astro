@@ -1,0 +1,83 @@
+---
+import type { Metadata } from "../lib/schema/metadata.schema";
+import { socialLabel } from "../icons/social";
+import SocialIcon from "./SocialIcon.astro";
+
+interface Props {
+  metadata: Metadata;
+}
+
+const { metadata } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <ul class="footer-links">
+      {
+        metadata.social.map((entry) => (
+          <li>
+            <a
+              href={entry.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={socialLabel(entry.platform)}
+              title={socialLabel(entry.platform)}
+            >
+              <SocialIcon platform={entry.platform} />
+            </a>
+          </li>
+        ))
+      }
+      {
+        metadata.contact.emails.map((email) => (
+          <li>
+            <a href={`mailto:${email.address}`}>{email.label}</a>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="copyright">© {year} {metadata.personal.display_name}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--border-subtle);
+    margin-top: 3rem;
+  }
+
+  .site-footer__inner {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.85rem;
+  }
+
+  .footer-links {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    text-transform: capitalize;
+  }
+
+  .footer-links a {
+    display: inline-flex;
+    align-items: center;
+    color: inherit;
+  }
+
+  .copyright {
+    color: var(--text-muted);
+    margin: 0;
+  }
+</style>

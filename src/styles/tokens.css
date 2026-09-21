@@ -1,0 +1,55 @@
+/*
+  Design tokens de color — PLACEHOLDER PROVISORIO.
+  Paleta fuente (Coolors): #182A4E, #F9BB31, #74ACDF, #FFFFFF, #802A00.
+  El rol de cada color (fondo/texto/acentos/botones) todavía no fue confirmado
+  por el usuario final — esta asignación es un punto de partida razonable,
+  no una decisión definitiva. El resto del código consume solo las variables
+  semánticas de abajo, nunca los hex directamente, para que reasignar roles
+  más adelante sea cuestión de editar únicamente este archivo.
+*/
+
+:root {
+  --color-navy-900: #182a4e;
+  --color-gold-500: #f9bb31;
+  --color-sky-400: #74acdf;
+  --color-white: #ffffff;
+  --color-rust-800: #802a00;
+
+  /* roles semánticos — light theme (default) */
+  --bg-base: var(--color-white);
+  --bg-surface: var(--color-white);
+  --text-primary: var(--color-navy-900);
+  --text-muted: color-mix(in srgb, var(--color-navy-900) 70%, white);
+  --accent-primary: var(--color-gold-500);
+  --accent-secondary: var(--color-sky-400);
+  --accent-warn: var(--color-rust-800);
+  --border-subtle: color-mix(in srgb, var(--color-navy-900) 15%, white);
+  --link-color: var(--color-navy-900);
+  --link-hover: var(--color-rust-800);
+
+  /* glassmorphism base (navbar al hacer scroll, menú mobile, panel de filtros, cards de abstract) */
+  --glass-bg: color-mix(in srgb, var(--color-white) 60%, transparent);
+  --glass-border: color-mix(in srgb, var(--color-white) 40%, transparent);
+  --glass-blur: 12px;
+
+  /* tipografía */
+  --font-sans: "DM Sans Variable", "DM Sans", system-ui, sans-serif;
+  --font-mono: "Lilex Variable", "Lilex", ui-monospace, monospace;
+}
+
+[data-theme="dark"] {
+  --bg-base: var(--color-navy-900);
+  --bg-surface: color-mix(in srgb, var(--color-navy-900) 85%, black);
+  --text-primary: var(--color-white);
+  --text-muted: color-mix(in srgb, var(--color-white) 70%, var(--color-navy-900));
+  --accent-primary: var(--color-gold-500);
+  --accent-secondary: var(--color-sky-400);
+  --accent-warn: var(--color-rust-800);
+  --border-subtle: color-mix(in srgb, var(--color-white) 15%, var(--color-navy-900));
+  --link-color: var(--color-sky-400);
+  --link-hover: var(--color-gold-500);
+
+  --glass-bg: color-mix(in srgb, var(--color-navy-900) 55%, transparent);
+  --glass-border: color-mix(in srgb, var(--color-white) 12%, transparent);
+  --glass-blur: 12px;
+}

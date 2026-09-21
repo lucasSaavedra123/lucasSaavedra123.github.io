@@ -1,0 +1,108 @@
+---
+import { t, type Locale } from "../i18n/ui";
+import type { Metadata } from "../lib/schema/metadata.schema";
+import { socialLabel } from "../icons/social";
+import SocialIcon from "./SocialIcon.astro";
+
+interface Props {
+  locale: Locale;
+  metadata: Metadata;
+}
+
+const { locale, metadata } = Astro.props;
+const roleLabel = metadata.personal.roles.join(" / ");
+---
+
+<section class="about">
+  <div class="about__intro">
+    <img
+      class="photo"
+      src={metadata.personal.photo_url}
+      alt={metadata.personal.display_name}
+      width="200"
+      height="200"
+    />
+
+    <div class="about__intro-text">
+      <h1>
+        {t(locale, "about.greeting")} {metadata.personal.display_name}
+      </h1>
+      {roleLabel && <p class="role-location">{roleLabel} · {metadata.personal.location}</p>}
+
+      <div class="social-row">
+        {
+          metadata.social.map((entry) => (
+            <a
+              class="btn btn--icon"
+              href={entry.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={socialLabel(entry.platform)}
+              title={socialLabel(entry.platform)}
+            >
+              <SocialIcon platform={entry.platform} />
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="about__bio">
+    {metadata.about.bio.map((paragraph) => <p>{paragraph}</p>)}
+  </div>
+</section>
+
+<style>
+  .about {
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: 3rem 1.25rem;
+  }
+
+  .about__intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .photo {
+    width: 8rem;
+    height: 8rem;
+    object-fit: cover;
+    border-radius: 999px;
+    border: 1px solid var(--border-subtle);
+  }
+
+  .about__intro-text h1 {
+    margin: 0 0 0.35rem;
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+  }
+
+  .role-location {
+    margin: 0 0 1rem;
+    color: var(--text-muted);
+  }
+
+  .social-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .about__bio {
+    max-width: 42rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+  }
+
+  .about__bio p {
+    margin: 0;
+  }
+</style>

@@ -1,0 +1,64 @@
+---
+import { locales, t, type Locale } from "../i18n/ui";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+// Solo "en" tiene contenido real por ahora. Los demás locales de `locales`
+// (ej. "es") se muestran deshabilitados: agregar soporte real más adelante
+// es sumar el idioma a `locales`/`ui` y las páginas bajo `src/pages/<locale>/`,
+// sin tocar este componente.
+const availableLocales: Locale[] = ["en"];
+---
+
+<div class="language-switcher" role="group" aria-label={t(locale, "language.label")}>
+  {
+    locales.map((code) => {
+      const isAvailable = availableLocales.includes(code);
+      const isCurrent = code === locale;
+      return isAvailable ? (
+        <a
+          href="/"
+          class="lang-option"
+          aria-current={isCurrent ? "true" : undefined}
+        >
+          {code.toUpperCase()}
+        </a>
+      ) : (
+        <span class="lang-option lang-option--disabled" aria-disabled="true">
+          {code.toUpperCase()}
+        </span>
+      );
+    })
+  }
+</div>
+
+<style>
+  .language-switcher {
+    display: inline-flex;
+    gap: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+  }
+
+  .lang-option {
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+
+  .lang-option[aria-current="true"] {
+    background: var(--accent-secondary);
+    color: var(--color-navy-900);
+  }
+
+  .lang-option--disabled {
+    color: var(--text-muted);
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+</style>

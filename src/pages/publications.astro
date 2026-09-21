@@ -1,0 +1,18 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Publications from "../components/Publications.astro";
+import { loadMetadata } from "../lib/metadata";
+import { fetchPublications } from "../lib/publications";
+import { defaultLocale, t } from "../i18n/ui";
+
+const metadata = loadMetadata(defaultLocale);
+const publications = await fetchPublications(metadata);
+const scholarUrl = metadata.social.find(
+  (entry) => entry.platform === "google_scholar"
+)?.url;
+const title = `${t(defaultLocale, "nav.publications")} — ${metadata.personal.display_name}`;
+---
+
+<BaseLayout title={title} description={metadata.summary.short}>
+  <Publications publications={publications} locale={defaultLocale} scholarUrl={scholarUrl} />
+</BaseLayout>

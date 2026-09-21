@@ -1,0 +1,71 @@
+---
+import { t, type Locale } from "../i18n/ui";
+import type { Metadata } from "../lib/schema/metadata.schema";
+import { formatNewsDate, sortNewsDescending } from "../lib/news";
+
+interface Props {
+  locale: Locale;
+  metadata: Metadata;
+}
+
+const { locale, metadata } = Astro.props;
+
+const entries = sortNewsDescending(metadata.news).slice(0, 5);
+---
+
+{
+  entries.length > 0 && (
+    <section class="news-preview">
+      <div class="news-preview__header">
+        <h2>{t(locale, "news.heading")}</h2>
+        <a class="view-all" href="/news">
+          {t(locale, "news.viewAll")}
+        </a>
+      </div>
+
+      <ul class="news-list">
+        {entries.map((entry) => (
+          <li class="news-item">
+            <time class="news-date" datetime={entry.date}>
+              {formatNewsDate(entry.date)}
+            </time>
+            {entry.link ? (
+              <a class="news-text" href={entry.link}>
+                {entry.text}
+              </a>
+            ) : (
+              <span class="news-text">{entry.text}</span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+<style>
+  .news-preview {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 3rem;
+  }
+
+  .news-preview__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .news-preview__header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  .view-all {
+    font-size: 0.9rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+</style>

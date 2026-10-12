@@ -2,6 +2,7 @@
 import type { Profile } from "../data/profile";
 import { socialLabel } from "../icons/social";
 import SocialIcon from "./SocialIcon.astro";
+import MailIcon from "./MailIcon.astro";
 
 interface Props {
   metadata: Profile;
@@ -32,7 +33,10 @@ const year = new Date().getFullYear();
       {
         metadata.contact.emails.map((email) => (
           <li>
-            <a href={`mailto:${email.address}`}>{email.label}</a>
+            <a href={`mailto:${email.address}`} title={email.address}>
+              <MailIcon />
+              {email.label}
+            </a>
           </li>
         ))
       }
@@ -73,6 +77,7 @@ const year = new Date().getFullYear();
   .footer-links a {
     display: inline-flex;
     align-items: center;
+    gap: 0.35rem;
     color: inherit;
   }
 

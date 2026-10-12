@@ -92,7 +92,7 @@ export const profile: Profile = {
   personal: {
     full_name: "Lucas Ariel Saavedra",
     display_name: "Lucas A. Saavedra",
-    roles: ["Software Engineer", "Researcher"],
+    roles: ["Computer Engineer", "Artificial Intelligence Researcher"],
     location: "Buenos Aires, Argentina",
     photo_url: "/images/profile.jpg",
   },
@@ -101,25 +101,28 @@ export const profile: Profile = {
     short: "Placeholder short summary for About Me and meta description.",
   },
   contact: {
-    emails: [{ address: "placeholder@example.com", label: "Personal" }],
+    emails: [
+      { address: "lucasarielsaavedra@hotmail.com", label: "Personal" },
+      { address: "lucasarielsaavedra@uca.edu.ar", label: "Academic" },
+    ],
     phone: "",
     calendly_url: "https://calendly.com/placeholder",
     intro:
       "Placeholder intro: feel free to reach out by email or schedule a meeting below.",
   },
   social: [
-    { platform: "github", url: "https://github.com/placeholder" },
-    { platform: "linkedin", url: "https://linkedin.com/in/placeholder" },
-    { platform: "x", url: "https://x.com/placeholder" },
+    { platform: "github", url: "https://github.com/lucasSaavedra123" },
+    { platform: "linkedin", url: "https://linkedin.com/in/lucassaave" },
+    { platform: "x", url: "https://x.com/LucaasSaave" },
     {
       platform: "researchgate",
-      url: "https://www.researchgate.net/profile/placeholder",
+      url: "https://researchgate.net/profile/Lucas-Saavedra-3",
     },
     {
       platform: "google_scholar",
-      url: "https://scholar.google.com/citations?user=placeholder",
+      url: "https://scholar.google.com/citations?user=vozUZ10AAAAJ",
     },
-    { platform: "orcid", url: "https://orcid.org/0000-0000-0000-0000" },
+    { platform: "orcid", url: "https://orcid.org/0000-0002-3566-1154" },
   ],
   about: {
     bio: [
@@ -190,6 +193,7 @@ export const profile: Profile = {
     },
   ],
   news: [
+    /*
     {
       date: "2026-08-15",
       text: "Placeholder news item: gave a talk at a placeholder conference.",
@@ -211,6 +215,7 @@ export const profile: Profile = {
       date: "2026-01-05",
       text: "Placeholder news item: launched this personal website.",
     },
+    */
   ],
   cv_pdf_url: "/cv/cv-en.pdf",
   resume_pdf_url: "/cv/resume-en.pdf",

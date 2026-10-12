@@ -15,24 +15,28 @@ const entries = sortNewsDescending(metadata.news);
 <div class="news-page">
   <h1>{t(locale, "nav.news")}</h1>
 
-  <ul class="news-list">
-    {
-      entries.map((entry) => (
-        <li class="news-item">
-          <time class="news-date" datetime={entry.date}>
-            {formatNewsDate(entry.date)}
-          </time>
-          {entry.link ? (
-            <a class="news-text" href={entry.link}>
-              {entry.text}
-            </a>
-          ) : (
-            <span class="news-text">{entry.text}</span>
-          )}
-        </li>
-      ))
-    }
-  </ul>
+  {
+    entries.length > 0 ? (
+      <ul class="news-list">
+        {entries.map((entry) => (
+          <li class="news-item">
+            <time class="news-date" datetime={entry.date}>
+              {formatNewsDate(entry.date)}
+            </time>
+            {entry.link ? (
+              <a class="news-text" href={entry.link}>
+                {entry.text}
+              </a>
+            ) : (
+              <span class="news-text">{entry.text}</span>
+            )}
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="news-empty">{t(locale, "news.empty")}</p>
+    )
+  }
 </div>
 
 <style>
@@ -45,5 +49,10 @@ const entries = sortNewsDescending(metadata.news);
   .news-page h1 {
     margin: 0 0 1.5rem;
     font-size: clamp(1.5rem, 4vw, 2.25rem);
+  }
+
+  .news-empty {
+    margin: 0;
+    color: var(--text-muted);
   }
 </style>

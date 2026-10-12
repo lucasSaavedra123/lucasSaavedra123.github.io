@@ -19,6 +19,7 @@ const en = {
   "hero.cta.resume": "View CV",
   "news.heading": "News",
   "news.viewAll": "View all →",
+  "news.empty": "No news to share at the moment — check back soon.",
   "contact.schedule": "Schedule a meeting",
   "about.greeting": "Hi, I'm",
   "cv.download.cv": "Download CV",

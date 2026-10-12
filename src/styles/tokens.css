@@ -44,7 +44,9 @@
   --text-muted: color-mix(in srgb, var(--color-white) 70%, var(--color-navy-900));
   --accent-primary: var(--color-gold-500);
   --accent-secondary: var(--color-sky-400);
-  --accent-warn: var(--color-rust-800);
+  /* El rust oscuro (light theme) queda apagado y con poco contraste sobre el
+     navy; en dark usamos el dorado de marca para el link activo del navbar. */
+  --accent-warn: var(--color-gold-500);
   --border-subtle: color-mix(in srgb, var(--color-white) 15%, var(--color-navy-900));
   --link-color: var(--color-sky-400);
   --link-hover: var(--color-gold-500);

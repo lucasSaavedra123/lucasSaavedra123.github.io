@@ -3,6 +3,7 @@ import { t, type Locale } from "../i18n/ui";
 import type { Profile } from "../data/profile";
 import { socialLabel } from "../icons/social";
 import SocialIcon from "./SocialIcon.astro";
+import MailIcon from "./MailIcon.astro";
 
 interface Props {
   locale: Locale;
@@ -34,7 +35,12 @@ const roleLabel = metadata.personal.roles.join(" / ");
       </a>
       {
         metadata.contact.emails.map((email) => (
-          <a class="btn" href={`mailto:${email.address}`}>
+          <a
+            class="btn"
+            href={`mailto:${email.address}`}
+            title={email.address}
+          >
+            <MailIcon />
             {email.label}
           </a>
         ))

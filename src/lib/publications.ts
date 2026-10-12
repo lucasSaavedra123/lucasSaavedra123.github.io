@@ -1,11 +1,14 @@
 import { parseAsync, type Entry } from "@retorquere/bibtex-parser";
-import type { Metadata } from "./schema/metadata.schema";
 import {
   PublicationSchema,
-  PublicationSectionSchema,
   type Publication,
   type PublicationSection,
 } from "./schema/publications.schema";
+
+// Import estático del .bib local como texto (mismo mecanismo `?raw` que usaba
+// el loader de metadata): Vite lo bundlea como asset en el build de producción.
+// Reemplaza el fetch remoto que antes leía `papers_source` desde el YAML.
+import refBibRaw from "../data/ref.bib?raw";
 
 function formatVenue(fields: Entry["fields"]): string {
   if (fields.journal) return fields.journal;
@@ -41,14 +44,37 @@ function parseEqualContrib(fields: Entry["fields"]): number[] {
     .filter((n) => Number.isInteger(n) && n > 0);
 }
 
-// Campo custom opcional (no estándar de BibTeX/BibLaTeX): a qué de las 3
-// secciones fijas de Publications pertenece la entrada (ver plan.md, Fase 9).
-// Sin este campo (como en el .bib de ejemplo usado hoy), o con un valor que
-// no matchea ninguna sección conocida, se deja sin definir y el schema le
-// aplica el default "journal".
-function parsePubSection(fields: Entry["fields"]): PublicationSection | undefined {
-  const result = PublicationSectionSchema.safeParse(fields.pub_section?.trim());
-  return result.success ? result.data : undefined;
+// Carpeta pública donde viven los PDFs de los papers. El campo `file` del .bib
+// trae el nombre del archivo (ej. "ijms-23-10435-v2.pdf"); el PDF real se
+// coloca en `public/papers/` y se sirve desde esta ruta. Dejar los archivos
+// ahí habilita automáticamente el botón "PDF" de cada publicación.
+const PAPERS_BASE_URL = "/papers";
+
+// Resuelve el campo `file` del .bib a la URL pública del PDF. Tolera que el
+// valor venga con una ruta (toma solo el nombre de archivo) o en el formato
+// "descripción:ruta.pdf:PDF" de JabRef/Zotero (toma el token que termina en
+// .pdf). Si no hay `file`, devuelve undefined y el botón queda deshabilitado.
+function resolvePdfUrl(fields: Entry["fields"]): string | undefined {
+  const raw = fields.file?.trim();
+  if (!raw) return undefined;
+  const pdfToken = raw.split(":").find((part) => part.trim().toLowerCase().endsWith(".pdf")) ?? raw;
+  const fileName = pdfToken.split(/[\\/]/).pop()?.trim();
+  if (!fileName) return undefined;
+  return `${PAPERS_BASE_URL}/${fileName}`;
+}
+
+// A cuál de las 3 secciones fijas de Publications pertenece la entrada, según
+// la convención que documenta el propio ref.bib:
+//   - entradas @inproceedings -> conferencias
+//   - keywords = {under_review} -> en revisión
+//   - resto (@article, etc.) -> journals
+function resolveSection(entry: Entry): PublicationSection {
+  if (entry.type === "inproceedings") return "conference";
+  const keywords = entry.fields.keywords ?? [];
+  if (keywords.some((keyword) => keyword.trim().toLowerCase() === "under_review")) {
+    return "under_review";
+  }
+  return "journal";
 }
 
 function toPublication(entry: Entry): Publication {
@@ -64,8 +90,8 @@ function toPublication(entry: Entry): Publication {
     abstract: fields.abstract || undefined,
     doi: fields.doi || undefined,
     url: fields.url || undefined,
-    pdfUrl: fields.pdf_url || undefined,
-    section: parsePubSection(fields),
+    pdfUrl: resolvePdfUrl(fields),
+    section: resolveSection(entry),
     bibtex: entry.input,
   };
 
@@ -78,28 +104,19 @@ function toPublication(entry: Entry): Publication {
   return result.data;
 }
 
-const cache = new Map<string, Promise<Publication[]>>();
+let cache: Promise<Publication[]> | undefined;
 
-export function fetchPublications(metadata: Metadata): Promise<Publication[]> {
-  const cached = cache.get(metadata.papers_source);
-  if (cached) return cached;
+export function getPublications(): Promise<Publication[]> {
+  if (cache) return cache;
 
-  const promise = (async () => {
-    const res = await fetch(metadata.papers_source);
-    if (!res.ok) {
-      throw new Error(
-        `No se pudo obtener el .bib desde papers_source (${metadata.papers_source}): ${res.status}`
-      );
-    }
-    const bibText = await res.text();
-    const library = await parseAsync(bibText);
+  cache = (async () => {
+    const library = await parseAsync(refBibRaw);
     return library.entries
       .filter((entry) => entry.type !== "set") // agrupadores BibLaTeX, no publicaciones reales
       .map((entry) => toPublication(entry));
   })();
 
-  cache.set(metadata.papers_source, promise);
-  return promise;
+  return cache;
 }
 
 export function groupByYear(

@@ -4,7 +4,7 @@ import "../styles/fonts.css";
 import "../styles/global.css";
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
-import { loadMetadata } from "../lib/metadata";
+import { profile } from "../data/profile";
 import { defaultLocale, t, type Locale } from "../i18n/ui";
 
 interface Props {
@@ -18,8 +18,6 @@ const {
   description = "Placeholder description.",
   locale = defaultLocale,
 } = Astro.props;
-
-const metadata = loadMetadata(locale);
 
 // Imagen OG única para todo el sitio (confirmado, Fase 8) — contenido real
 // pendiente (ver plan.md, "Contenido a completar"), placeholder por ahora.
@@ -81,10 +79,10 @@ const gaMeasurementId = "G-PLACEHOLDER";
   </head>
   <body>
     <a href="#main-content" class="skip-link">{t(locale, "a11y.skipToContent")}</a>
-    <Navbar locale={locale} metadata={metadata} />
+    <Navbar locale={locale} metadata={profile} />
     <main id="main-content">
       <slot />
     </main>
-    <Footer metadata={metadata} />
+    <Footer metadata={profile} />
   </body>
 </html>

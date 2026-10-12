@@ -1,9 +1,9 @@
 import { z } from "zod";
 
-// Las 3 secciones fijas de Publications (ver plan.md, Fase 9). Se asignan por
-// el campo custom `pub_section` del .bib; sin ese dato, la entrada cae en
-// "journal" por default (mismo criterio que equalContribIndexes: el mecanismo
-// queda listo, inerte hasta que el .bib real del usuario traiga el campo).
+// Las 3 secciones fijas de Publications. La asignación la resuelve
+// `resolveSection` en src/lib/publications.ts a partir del tipo de entrada
+// (@inproceedings) y del campo `keywords` ({under_review}) del .bib; el resto
+// cae en "journal" por default.
 export const PublicationSectionSchema = z.enum(["journal", "under_review", "conference"]);
 export type PublicationSection = z.infer<typeof PublicationSectionSchema>;
 

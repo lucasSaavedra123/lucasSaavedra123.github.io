@@ -8,11 +8,10 @@ import "../styles/tokens.css";
 import "../styles/fonts.css";
 import "../styles/global.css";
 import PdfIcon from "../components/PdfIcon.astro";
-import { loadMetadata } from "../lib/metadata";
+import { profile } from "../data/profile";
 import { defaultLocale } from "../i18n/ui";
 
-const metadata = loadMetadata(defaultLocale);
-const title = `${metadata.personal.display_name} — Under construction`;
+const title = `${profile.personal.display_name} — Under construction`;
 
 // Hardcodeadas acá a propósito, no en la metadata (decisión del usuario):
 // son URLs externas de redirección (no un archivo local a descargar) y

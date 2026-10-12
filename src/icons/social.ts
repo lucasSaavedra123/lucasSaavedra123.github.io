@@ -1,4 +1,13 @@
-import type { SocialPlatformKey } from "../lib/schema/metadata.schema";
+// Plataformas de redes sociales soportadas (tienen ícono en SOCIAL_ICONS).
+// Antes vivía en el schema Zod de metadata (ya eliminado); ahora es la fuente
+// de verdad del tipo, consumida por profile.ts y SocialIcon.astro.
+export type SocialPlatformKey =
+  | "github"
+  | "linkedin"
+  | "x"
+  | "researchgate"
+  | "google_scholar"
+  | "orcid";
 
 interface SocialIconDef {
   viewBox: string;

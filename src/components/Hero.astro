@@ -1,12 +1,12 @@
 ---
 import { t, type Locale } from "../i18n/ui";
-import type { Metadata } from "../lib/schema/metadata.schema";
+import type { Profile } from "../data/profile";
 import { socialLabel } from "../icons/social";
 import SocialIcon from "./SocialIcon.astro";
 
 interface Props {
   locale: Locale;
-  metadata: Metadata;
+  metadata: Profile;
 }
 
 const { locale, metadata } = Astro.props;

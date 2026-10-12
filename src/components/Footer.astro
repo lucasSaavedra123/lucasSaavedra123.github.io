@@ -1,10 +1,10 @@
 ---
-import type { Metadata } from "../lib/schema/metadata.schema";
+import type { Profile } from "../data/profile";
 import { socialLabel } from "../icons/social";
 import SocialIcon from "./SocialIcon.astro";
 
 interface Props {
-  metadata: Metadata;
+  metadata: Profile;
 }
 
 const { metadata } = Astro.props;

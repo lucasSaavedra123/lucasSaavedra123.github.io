@@ -1,4 +1,4 @@
-import type { NewsItem } from "./schema/metadata.schema";
+import type { NewsItem } from "../data/profile";
 
 export function sortNewsDescending(news: NewsItem[]): NewsItem[] {
   return [...news].sort((a, b) => b.date.localeCompare(a.date));

@@ -1,6 +1,6 @@
 ---
 import { t, type Locale } from "../i18n/ui";
-import type { Profile } from "../data/profile";
+import type { ExperienceCategory, Profile } from "../data/profile";
 import PdfIcon from "./PdfIcon.astro";
 
 interface Props {
@@ -10,20 +10,57 @@ interface Props {
 
 const { locale, metadata } = Astro.props;
 const roleLabel = metadata.personal.roles.join(" / ");
-const site = Astro.site;
 
-function formatYear(value: string): string {
-  return value.toLowerCase() === "present" ? "Present" : value.slice(0, 4);
+const MONTHS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+
+// Formatea una fecha "YYYY-MM" como "May 2025"; "YYYY" (sin mes) como "2025";
+// y "present" como "Present".
+function formatMonthYear(value: string): string {
+  if (value.toLowerCase() === "present") return "Present";
+  const [year, month] = value.split("-").map((part) => Number.parseInt(part, 10));
+  if (!year) return value;
+  if (!month) return String(year);
+  return `${MONTHS[month - 1]} ${year}`;
 }
 
+// Rango de fechas: colapsa a un solo valor cuando inicio y fin coinciden
+// (ej. "March 2024"), si no "May 2025 – Present" / "2018 – 2023".
+function formatDateRange(start: string, end: string): string {
+  const from = formatMonthYear(start);
+  const to = formatMonthYear(end);
+  return from === to ? from : `${from} – ${to}`;
+}
+
+function formatDate(value: string): string {
+  const [year, month, day] = value.split("-").map((part) => Number.parseInt(part, 10));
+  if (!year || !month || !day) return value;
+  return `${day} ${MONTHS[month - 1]} ${year}`;
+}
+
+// Las tres subsecciones de experiencia, en orden, filtrando las vacías (ej.
+// "research" queda vacío hasta que el usuario lo complete).
+const EXPERIENCE_CATEGORIES: ExperienceCategory[] = ["research", "teaching", "industry"];
+const experienceGroups = EXPERIENCE_CATEGORIES.map((category) => ({
+  category,
+  entries: metadata.experience.filter((entry) => entry.category === category),
+})).filter((group) => group.entries.length > 0);
+
+const hasInterests = metadata.interests.length > 0;
+
+// El índice omite las secciones que no tienen contenido todavía (hoy, Interests
+// mientras el usuario no la complete).
 const sections = [
   { id: "contact", label: t(locale, "cv.section.contact") },
   { id: "summary", label: t(locale, "cv.section.summary") },
   { id: "education", label: t(locale, "cv.section.education") },
   { id: "experience", label: t(locale, "cv.section.experience") },
   { id: "skills", label: t(locale, "cv.section.skills") },
+  { id: "certificates", label: t(locale, "cv.section.certificates") },
   { id: "courses", label: t(locale, "cv.section.courses") },
-  { id: "interests", label: t(locale, "cv.section.interests") },
+  ...(hasInterests ? [{ id: "interests", label: t(locale, "cv.section.interests") }] : []),
 ];
 ---
 
@@ -70,17 +107,16 @@ const sections = [
           </li>
         ))
       }
-      {metadata.contact.phone && <li>{metadata.contact.phone}</li>}
-      <li>{metadata.personal.location}</li>
+      <li>{t(locale, "cv.contact.dob")}: {formatDate(metadata.personal.date_of_birth)}</li>
       {
-        site && (
+        metadata.personal.nationalities.length > 0 && (
           <li>
-            <a href={site.toString()} target="_blank" rel="noopener noreferrer">
-              {site.toString()}
-            </a>
+            {t(locale, "cv.contact.nationalities")}:{" "}
+            {metadata.personal.nationalities.join(", ")}
           </li>
         )
       }
+      <li>{metadata.personal.location}</li>
     </ul>
   </section>
 
@@ -96,7 +132,7 @@ const sections = [
         metadata.education.map((entry) => (
           <li class="timeline__entry">
             <span class="timeline__date">
-              {formatYear(entry.start_date)} – {formatYear(entry.end_date)}
+              {formatDateRange(entry.start_date, entry.end_date)}
             </span>
             <div class="timeline__content">
               <p class="timeline__title">{entry.degree}</p>
@@ -117,28 +153,33 @@ const sections = [
 
   <section id="experience" class="cv__section">
     <h2>{t(locale, "cv.section.experience")}</h2>
-    <ul class="timeline">
-      {
-        metadata.experience.map((entry) => (
-          <li class="timeline__entry">
-            <span class="timeline__date">
-              {formatYear(entry.start_date)} – {formatYear(entry.end_date)}
-            </span>
-            <div class="timeline__content">
-              <p class="timeline__title">{entry.role}</p>
-              <p class="timeline__subtitle">
-                {entry.organization} · {entry.location}
-              </p>
-              {entry.highlights.length > 0 && (
-                <ul class="timeline__highlights">
-                  {entry.highlights.map((highlight) => <li>{highlight}</li>)}
-                </ul>
-              )}
-            </div>
-          </li>
-        ))
-      }
-    </ul>
+    {
+      experienceGroups.map((group) => (
+        <div class="experience-group">
+          <h3>{t(locale, `cv.experience.${group.category}`)}</h3>
+          <ul class="timeline">
+            {group.entries.map((entry) => (
+              <li class="timeline__entry">
+                <span class="timeline__date">
+                  {formatDateRange(entry.start_date, entry.end_date)}
+                </span>
+                <div class="timeline__content">
+                  <p class="timeline__title">{entry.role}</p>
+                  <p class="timeline__subtitle">
+                    {entry.organization} · {entry.location}
+                  </p>
+                  {entry.highlights.length > 0 && (
+                    <ul class="timeline__highlights">
+                      {entry.highlights.map((highlight) => <li>{highlight}</li>)}
+                    </ul>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
   </section>
 
   <section id="skills" class="cv__section">
@@ -157,6 +198,21 @@ const sections = [
     </div>
   </section>
 
+  <section id="certificates" class="cv__section">
+    <h2>{t(locale, "cv.section.certificates")}</h2>
+    <ul class="courses-list">
+      {
+        metadata.certificates.map((item) => (
+          <li>
+            <span class="courses-list__date">{item.date}</span>
+            {item.name}
+            {item.institution && <> — {item.institution}</>}
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
   <section id="courses" class="cv__section">
     <h2>{t(locale, "cv.section.courses")}</h2>
     <ul class="courses-list">
@@ -164,19 +220,26 @@ const sections = [
         metadata.courses.map((course) => (
           <li>
             <span class="courses-list__date">{course.date}</span>
-            {course.name} — {course.institution}
+            {course.name}
+            {course.institution && <> — {course.institution}</>}
           </li>
         ))
       }
     </ul>
   </section>
 
-  <section id="interests" class="cv__section">
-    <h2>{t(locale, "cv.section.interests")}</h2>
-    <ul class="chip-list">
-      {metadata.interests.map((interest) => <li>{interest}</li>)}
-    </ul>
-  </section>
+  {
+    hasInterests && (
+      <section id="interests" class="cv__section">
+        <h2>{t(locale, "cv.section.interests")}</h2>
+        <ul class="chip-list">
+          {metadata.interests.map((interest) => (
+            <li>{interest}</li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
 </div>
 
 <style>
@@ -260,6 +323,19 @@ const sections = [
     font-family: var(--font-mono);
     color: var(--text-muted);
     margin-right: 0.5rem;
+  }
+
+  .experience-group + .experience-group {
+    margin-top: 1.5rem;
+  }
+
+  .experience-group h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
 
   .timeline {

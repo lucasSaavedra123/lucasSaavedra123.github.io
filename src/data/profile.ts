@@ -94,7 +94,7 @@ export const profile: Profile = {
     display_name: "Lucas A. Saavedra",
     roles: ["Software Engineer", "Researcher"],
     location: "Buenos Aires, Argentina",
-    photo_url: "/images/placeholder-photo.svg",
+    photo_url: "/images/profile.jpg",
   },
   summary: {
     full: "Placeholder professional summary. Replace with the real CV summary.",

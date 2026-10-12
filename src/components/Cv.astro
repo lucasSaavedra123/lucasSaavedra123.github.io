@@ -349,7 +349,7 @@ const sections = [
 
   .timeline__entry {
     display: grid;
-    grid-template-columns: 7rem 1fr;
+    grid-template-columns: 8.5rem 1fr;
     gap: 1rem;
   }
 
@@ -364,7 +364,8 @@ const sections = [
     font-family: var(--font-mono);
     color: var(--text-muted);
     font-size: 0.85rem;
-    white-space: nowrap;
+    overflow-wrap: break-word;
+    min-width: 0;
   }
 
   .timeline__title {

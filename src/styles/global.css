@@ -64,9 +64,15 @@ main {
   border-radius: 0.5rem;
   border: 1px solid var(--border-subtle);
   text-decoration: none;
+  /* Fondo transparente explícito: sin esto, los <button class="btn">
+     (Abstract/BibTeX/DOI/Copy) heredan el "buttonface" del navegador —
+     un fondo claro que en dark queda ilegible con el texto blanco. */
+  background: transparent;
   color: var(--text-primary);
+  font-family: inherit;
   font-size: 0.9rem;
   text-transform: capitalize;
+  cursor: pointer;
 }
 
 .btn--primary {

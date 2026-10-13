@@ -1,0 +1,102 @@
+---
+import { t, type Locale } from "../i18n/ui";
+import type { Profile } from "../data/profile";
+
+interface Props {
+  locale: Locale;
+  metadata: Profile;
+}
+
+const { locale, metadata } = Astro.props;
+const { headline, body, references } = metadata.research_interests;
+---
+
+<section class="research-interests">
+  <h1>{t(locale, "nav.researchInterests")}</h1>
+  {headline && <p class="research-interests__headline">{headline}</p>}
+
+  <div class="research-interests__body">
+    {body.map((paragraph) => <p>{paragraph}</p>)}
+  </div>
+
+  {
+    references.length > 0 && (
+      <section class="research-interests__references">
+        <h2>{t(locale, "researchInterests.references")}</h2>
+        <ol>
+          {references.map((reference) => (
+            <li>
+              {reference.text}{" "}
+              <a href={reference.url} target="_blank" rel="noopener noreferrer">
+                {reference.url}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )
+  }
+</section>
+
+<style>
+  .research-interests {
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: 3rem 1.25rem;
+  }
+
+  .research-interests h1 {
+    margin: 0 0 1rem;
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+  }
+
+  .research-interests__headline {
+    max-width: 48rem;
+    margin: 0 0 2rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--text-primary);
+  }
+
+  .research-interests__body {
+    max-width: 46rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+  }
+
+  .research-interests__body p {
+    margin: 0;
+  }
+
+  .research-interests__references {
+    max-width: 46rem;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .research-interests__references h2 {
+    margin: 0 0 1rem;
+    font-size: 1.15rem;
+  }
+
+  .research-interests__references ol {
+    margin: 0;
+    padding-left: 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  .research-interests__references a {
+    word-break: break-word;
+  }
+</style>

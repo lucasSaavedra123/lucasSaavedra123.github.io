@@ -42,7 +42,7 @@ function formatDate(value: string): string {
 
 // Las tres subsecciones de experiencia, en orden, filtrando las vacías (ej.
 // "research" queda vacío hasta que el usuario lo complete).
-const EXPERIENCE_CATEGORIES: ExperienceCategory[] = ["research", "teaching", "industry"];
+const EXPERIENCE_CATEGORIES: ExperienceCategory[] = ["research", "industry", "teaching"];
 const experienceGroups = EXPERIENCE_CATEGORIES.map((category) => ({
   category,
   entries: metadata.experience.filter((entry) => entry.category === category),
@@ -54,7 +54,6 @@ const hasInterests = metadata.interests.length > 0;
 // mientras el usuario no la complete).
 const sections = [
   { id: "contact", label: t(locale, "cv.section.contact") },
-  { id: "summary", label: t(locale, "cv.section.summary") },
   { id: "education", label: t(locale, "cv.section.education") },
   { id: "experience", label: t(locale, "cv.section.experience") },
   { id: "skills", label: t(locale, "cv.section.skills") },
@@ -118,11 +117,6 @@ const sections = [
       }
       <li>{metadata.personal.location}</li>
     </ul>
-  </section>
-
-  <section id="summary" class="cv__section">
-    <h2>{t(locale, "cv.section.summary")}</h2>
-    <p>{metadata.summary.full}</p>
   </section>
 
   <section id="education" class="cv__section">

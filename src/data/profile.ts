@@ -54,6 +54,11 @@ export interface Course {
   date: string;
 }
 
+export interface Reference {
+  text: string;
+  url: string;
+}
+
 export interface NewsItem {
   date: string; // "YYYY-MM-DD"
   text: string;
@@ -71,7 +76,6 @@ export interface Profile {
     photo_url: string;
   };
   summary: {
-    full: string;
     short: string;
   };
   contact: {
@@ -83,6 +87,12 @@ export interface Profile {
   social: SocialLink[];
   about: {
     bio: string[];
+  };
+  // Página propia "Research Interests" (nav, al nivel de About/CV/Publications).
+  research_interests: {
+    headline: string; // tesis/título del statement
+    body: string[]; // un párrafo por string (citas en el texto como "(Autor, Año)")
+    references: Reference[];
   };
   education: EducationEntry[];
   experience: ExperienceEntry[];
@@ -106,8 +116,7 @@ export const profile: Profile = {
     photo_url: "/images/profile.jpg",
   },
   summary: {
-    full: "Placeholder professional summary. Replace with the real CV summary.",
-    short: "Placeholder short summary for About Me and meta description.",
+    short: "Computer engineer and AI researcher using deep learning to study the dynamics of proteins from microscopy and molecular dynamics simulations.",
   },
   contact: {
     emails: [
@@ -115,7 +124,7 @@ export const profile: Profile = {
       { address: "lucasarielsaavedra@uca.edu.ar", label: "Academic" },
     ],
     phone: "",
-    calendly_url: "https://calendly.com/placeholder",
+    calendly_url: "https://calendly.com/lucasarielsaavedra",
     intro:
       "Placeholder intro: feel free to reach out by email or schedule a meeting below.",
   },
@@ -135,9 +144,44 @@ export const profile: Profile = {
   ],
   about: {
     bio: [
-      "Placeholder biography paragraph one. This is where the real, narrative story of the user's background and path would go — replace with the actual biography.",
-      "Placeholder biography paragraph two. It would continue the narrative, covering education, early interests, and how the user got into their current field.",
-      "Placeholder biography paragraph three. It would wrap up with current focus, what the user is working on now, and what they're looking for next.",
+      "I was born in Ramos Mejía, Argentina. From a very young age I was so drawn to numbers that I liked to fill the receipt slips lying around the house with nothing but numbers — nothing more than that.",
+      "I attended a technical secondary school, Instituto San José (A-355), where I graduated as an electronics technician. It was there that I discovered how much I loved programming, which led me to pursue Computer Engineering at university.",
+      "I began my engineering degree in 2018. I greatly enjoyed reading physics and mathematics books, and I was quite interested of formalisms too. But above all, I was fascinated by artificial intelligence. As I took courses on the subject, I realized it was the field I wanted to explore over time.",
+      "Midway through my degree, I had the opportunity to join the laboratory of Professor Francisco Barrantes, with whom I have published more than five papers over four years. I have applied artificial intelligence (specifically, deep learning) to the trajectories of the acetylcholine neurotransmitter receptor in order to decode its motion, both in clusters and on its own. I also took part in the analysis of molecular dynamics (MD) simulations and studied receptor structures with deep learning to examine its affinity for cholesterol.",
+      "Now, I am looking for the opportunity to pursue a PhD at the intersection of computational science and molecular biology, focused on understanding, through AI, the dynamic molecular mechanisms of proteins and their interactions with surrounding molecules at the cellular and atomistic scales, separately. My goal is to develop AI methods that deepen the analysis within each modality — extracting dynamic information from SRM data on one hand, and from MD simulations on the other. With these methods, researchers can answer new biological questions that traditional methods cannot address with sufficient precision or scale. Through this work, I aim to contribute both to experimental cell-biology labs using advanced imaging techniques and to more quantitative groups focused on image analysis and computational modeling.",
+    ],
+  },
+  research_interests: {
+    headline:
+      "Development of artificial intelligence methods for the analysis of single-molecule dynamics using molecular dynamics simulations and experimental data of living cells.",
+    body: [
+      "The dynamics of biological components (e.g., cells) can be visualized using microscopy techniques. Among these, so-called superresolution microscopy (SRM) methods surpass the diffraction limit of light, providing sufficient resolution to interrogate the movement of molecules. SRM has made possible the study of the behaviour and lipid interactions of transmembrane proteins such as nicotinic acetylcholine receptors (nAChRs) (Barrantes, 2022). Proteins involved in genetics like the RNA polymerase (RNAP) were also interrogated using SRM (Stracy & Kapanidis, 2017).",
+      "Another methodology to study the dynamics of proteins and their interactions with their surrounding environment is the usage of all-atom molecular dynamics (MD) simulations. SRM techniques like MINFLUX and STED provide unprecedented insights into receptor dynamics in native cellular environments with resolutions below 100 nm, but atomistic details are not entirely captured in the cellular context. Conversely, all-atom MD simulations offer atomic-level resolution of receptor-lipid interactions but are sometimes computationally prohibitive because large time scales are not possible to attain.",
+      "In some cases, both approaches are used to analyse the same biological object independently. For example, the first steps of the hepatocyte growth factor receptor MET were analysed using both approaches: whereas MD simulations revealed that the binding of InlB to MET induces a conformation in the latter that enables dimer formation, smFRET showed that the structure formed by dimers is too close to previously published structures (Li et al., 2024). Although this study included AlphaFold, the application of AI remains limited as AI was barely used to analyse the dynamics of the biological system.",
+      "The application of artificial intelligence (AI) to SRM and all-atom MD simulations to process and analyse their output data is increasing. Important examples are AlphaFold to predict protein structures and Convolutional Neural Networks (CNN) to increase resolution in SRM. The question is: how can deep learning (DL) characterize the interactions between proteins and their surrounding environment through time? The application of AI to the cellular scale and, separately, to atomic scale data can enhance analysis of proteins in speed and accuracy.",
+      "My research interests lie at the intersection of computational science and molecular biology, focused on understanding, through AI, the dynamic molecular mechanisms of proteins and their interactions with surrounding molecules at the cellular and atomistic scales, separately. My goal is to develop AI methods that deepen the analysis within each modality extracting dynamic information from SRM data on one hand, and from MD simulations on the other. With these methods, researchers can answer new biological questions that traditional methods cannot answer with sufficient precision or scale. Through this work, I aim to contribute both to experimental cell biology labs using advanced imaging techniques and to more quantitative groups focused on image analysis and computational modeling.",
+    ],
+    references: [
+      {
+        text: "Barrantes, F. J. (2022). Fluorescence microscopy imaging of a neurotransmitter receptor and its cell membrane lipid milieu. Frontiers in Molecular Biosciences, 9, 1014659.",
+        url: "https://doi.org/10.3389/fmolb.2022.1014659",
+      },
+      {
+        text: "Chen, H., Yan, G., Wen, M.-H., Brooks, K. N., Zhang, Y., Huang, P.-S., & Chen, T.-Y. (2024). Advancements and Practical Considerations for Biophysical Research: Navigating the Challenges and Future of Super-resolution Microscopy. Chemical & Biomedical Imaging, 2(5), 331–344.",
+        url: "https://doi.org/10.1021/cbmi.4c00019",
+      },
+      {
+        text: "Li, Y., Arghittu, S. M., Dietz, M. S., Hella, G. J., Haße, D., Ferraris, D. M., Freund, P., Barth, H.-D., Iamele, L., de Jonge, H., Niemann, H. H., Covino, R., & Heilemann, M. (2024). Single-molecule imaging and molecular dynamics simulations reveal early activation of the MET receptor in cells. Nature Communications, 15(1), 9486.",
+        url: "https://doi.org/10.1038/s41467-024-53772-7",
+      },
+      {
+        text: "Son, A., Kim, W., Park, J., Lee, W., Lee, Y., Choi, S., & Kim, H. (2024). Utilizing Molecular Dynamics Simulations, Machine Learning, Cryo-EM, and NMR Spectroscopy to Predict and Validate Protein Dynamics. International Journal of Molecular Sciences, 25(17).",
+        url: "https://doi.org/10.3390/ijms25179725",
+      },
+      {
+        text: "Stracy, M., & Kapanidis, A. N. (2017). Single-molecule and super-resolution imaging of transcription in living bacteria. Methods, 120, 103–114.",
+        url: "https://doi.org/10.1016/j.ymeth.2017.04.001",
+      },
     ],
   },
   education: [
@@ -154,8 +198,37 @@ export const profile: Profile = {
     },
   ],
   experience: [
-    // Research: lo completa el usuario (ver research_experience.tex en personal_cv).
-    // Agregar acá entradas con category: "research".
+    // Research
+    {
+      category: "research",
+      organization: "Pontifical Catholic University Argentina (UCA)",
+      role: "Research Assistant — Molecular Neurobiology Laboratory (BIOMED UCA-CONICET)",
+      start_date: "2022-01",
+      end_date: "present",
+      location: "Buenos Aires, Argentina",
+      highlights: [
+        "Laboratory head: Prof. Francisco J. Barrantes.",
+        "Implementation of Deep Learning models for the analysis of static and dynamic properties of the receptor for the neurotransmitter acetylcholine (nAChR) with orientation to graph theory, artificial neural networks and geometric computing.",
+        "Analysis of distribution and density of nicotinic acetylcholine receptors (nAChRs) in the plasma membrane of CHO-K1/A5 cells using super-resolution microscopy (STED and STORM). Advanced analytical methods implemented with MATLAB, based on graph theory and computational geometry to study the topography of nanoclusters.",
+        "Development of an efficient and autonomous algorithm based on binary classifications with supervised Graph Neural Networks (GNNs) to detect and quantify the dynamic clustering of particles in membrane proteins in single-molecule microscopy (SMLM) data. The algorithm was developed with TensorFlow.",
+        "Analysis of sub-millisecond, two-colour MINFLUX single-molecule tracking data of nicotinic acetylcholine receptors and cholesterol in live cells. Segmented trajectories into confined and free-diffusion states, classified diffusive regimes (subdiffusive, Brownian, superdiffusive) via time-averaged MSD fitting adapted to irregular sampling intervals, and applied deep learning to characterise confinement.",
+        "Developed WadTCN, a deep learning architecture for pointwise and trajectory-level analysis of 2D single-particle diffusion: anomalous exponent and diffusion coefficient estimation, model classification and trajectory segmentation. It was applied to nAChR trajectories in live cells.",
+        "Application of AlphaFold3-equivalent models to study protein-ligand structures (specifically, the nAChR and cholesterol), combined with coarse-grained and all-atom molecular dynamics (MD) simulations, using CHARMM-GUI to prepare the systems, the GROMACS software, and high-performance computing (HPC) platforms with SLURM. Implemented deep learning methods to analyse the receptor's affinity for cholesterol, and used PyLipID to characterise cholesterol binding sites in the simulations.",
+        "Design and programming in C++ of electronic circuits with Arduino to control piezo motors.",
+      ],
+    },
+    {
+      category: "research",
+      organization: "Pontifical Catholic University Argentina (UCA)",
+      role: "Research Assistant — Data Science and AI Laboratory",
+      start_date: "2025-01",
+      end_date: "2026-01",
+      location: "Buenos Aires, Argentina",
+      highlights: [
+        "Supervisor: Prof. Antonio Quintero-Rincón.",
+        "Analysis of electroencephalogram (EEG) data during mental arithmetic tasks using self-supervised learning (specifically, hierarchical variational autoencoders) to detect specific cognitive activity with PyTorch and MNE-Python.",
+      ],
+    },
 
     // Teaching
     {
@@ -270,7 +343,7 @@ export const profile: Profile = {
         "Azure OpenAI",
       ],
     },
-    { category: "DevOps", items: ["AWS", "Docker", "CircleCI"] },
+    { category: "DevOps", items: ["AWS", "Docker", "CircleCI", "Azure", "GitHub Actions"] },
   ],
   // Interests: lo completa el usuario.
   interests: [],

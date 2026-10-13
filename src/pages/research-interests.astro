@@ -1,0 +1,12 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ResearchInterests from "../components/ResearchInterests.astro";
+import { profile } from "../data/profile";
+import { defaultLocale, t } from "../i18n/ui";
+
+const title = `${t(defaultLocale, "nav.researchInterests")} — ${profile.personal.display_name}`;
+---
+
+<BaseLayout title={title} description={profile.summary.short}>
+  <ResearchInterests metadata={profile} locale={defaultLocale} />
+</BaseLayout>

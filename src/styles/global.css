@@ -83,6 +83,22 @@ main {
   text-transform: none;
 }
 
+/* Hover propio del .btn: el `a:hover` global pinta el texto de --link-hover
+   (dorado en dark), que sobre el fondo dorado del --primary lo vuelve
+   invisible. Acá fijamos el color del texto y damos feedback con el fondo. */
+.btn:hover,
+.btn:focus-visible {
+  color: var(--text-primary);
+  background: color-mix(in srgb, var(--text-primary) 8%, transparent);
+}
+
+.btn--primary:hover,
+.btn--primary:focus-visible {
+  color: var(--color-navy-900);
+  background: color-mix(in srgb, var(--accent-primary) 85%, black);
+  border-color: color-mix(in srgb, var(--accent-primary) 85%, black);
+}
+
 /* Variante icon-only para links de redes sociales (Hero, About Me, Footer). */
 .btn--icon {
   padding: 0.55rem;

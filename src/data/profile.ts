@@ -383,7 +383,13 @@ export const profile: Profile = {
     { name: "Neural Networks and Deep Learning", institution: "DeepLearning.AI, Coursera", date: "2020" },
     { name: "CS50's Introduction to Artificial Intelligence with Python", institution: "Harvard, edX", date: "2020" },
   ],
-  news: [],
+  news: [
+    {
+      date: "2026-10-30",
+      text: 'New paper published in PLOS ONE: "A self-supervised reconstruction framework for segment-level detection of task-induced deviations in multi-channel EEG".',
+      link: "https://doi.org/10.1371/journal.pone.0361586",
+    },
+  ],
   media: [
     {
       date: "2025-09-22",

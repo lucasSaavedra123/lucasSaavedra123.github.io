@@ -1,7 +1,7 @@
 ---
 import { t, type Locale } from "../i18n/ui";
 import type { Publication } from "../lib/schema/publications.schema";
-import { groupByYear, groupBySection } from "../lib/publications";
+import { formatApa7Citation, groupByYear, groupBySection } from "../lib/publications";
 import PdfIcon from "./PdfIcon.astro";
 
 interface Props {
@@ -81,6 +81,18 @@ const SECTION_LABEL_KEYS = {
                         </p>
                       )}
                       <div class="publication__actions">
+                        <button
+                          type="button"
+                          class="btn"
+                          data-copy-btn
+                          data-copy-text={formatApa7Citation(publication).text}
+                          data-copy-html={formatApa7Citation(publication).html}
+                          data-copy-label={t(locale, "publications.action.copyApa7")}
+                          data-copied-label={t(locale, "publications.action.copied")}
+                          data-copy-error-label={t(locale, "publications.action.copyFailed")}
+                        >
+                          {t(locale, "publications.action.copyApa7")}
+                        </button>
                         {publication.abstract ? (
                           <button
                             type="button"
@@ -164,6 +176,7 @@ const SECTION_LABEL_KEYS = {
                           data-copy-btn
                           data-copy-label={t(locale, "publications.action.copy")}
                           data-copied-label={t(locale, "publications.action.copied")}
+                          data-copy-error-label={t(locale, "publications.action.copyFailed")}
                         >
                           {t(locale, "publications.action.copy")}
                         </button>
@@ -177,6 +190,7 @@ const SECTION_LABEL_KEYS = {
                             data-copy-btn
                             data-copy-label={t(locale, "publications.action.copy")}
                             data-copied-label={t(locale, "publications.action.copied")}
+                            data-copy-error-label={t(locale, "publications.action.copyFailed")}
                           >
                             {t(locale, "publications.action.copy")}
                           </button>
@@ -206,12 +220,30 @@ const SECTION_LABEL_KEYS = {
   });
 
   document.querySelectorAll("[data-copy-btn]").forEach((button) => {
-    const text = button.parentElement?.querySelector(".publication__panel-text")?.textContent ?? "";
+    const text =
+      button.getAttribute("data-copy-text") ??
+      button.parentElement?.querySelector(".publication__panel-text")?.textContent ??
+      "";
+    const html = button.getAttribute("data-copy-html");
     button.addEventListener("click", async () => {
       try {
-        await navigator.clipboard.writeText(text.trim());
+        if (html && navigator.clipboard.write && typeof ClipboardItem !== "undefined") {
+          await navigator.clipboard.write([
+            new ClipboardItem({
+              "text/html": new Blob([html], { type: "text/html" }),
+              "text/plain": new Blob([text.trim()], { type: "text/plain" }),
+            }),
+          ]);
+        } else {
+          await navigator.clipboard.writeText(text.trim());
+        }
       } catch {
-        return;
+        try {
+          await navigator.clipboard.writeText(text.trim());
+        } catch {
+          button.textContent = button.getAttribute("data-copy-error-label") ?? "";
+          return;
+        }
       }
       const copyLabel = button.getAttribute("data-copy-label") ?? "";
       const copiedLabel = button.getAttribute("data-copied-label") ?? "";

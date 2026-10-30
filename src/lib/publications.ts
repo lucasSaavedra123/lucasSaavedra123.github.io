@@ -32,6 +32,21 @@ function formatAuthors(fields: Entry["fields"]): string[] {
     .filter((name) => name.length > 0);
 }
 
+function formatApaAuthors(fields: Entry["fields"]): string[] {
+  return (fields.author ?? [])
+    .map((creator) => {
+      const surname = creator.lastName ?? creator.name ?? "";
+      const initials = (creator.firstName ?? "")
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean)
+        .map((name) => name.split("-").map((part) => `${part[0].toLocaleUpperCase()}.`).join("-"))
+        .join(" ");
+      return surname && initials ? `${surname}, ${initials}` : surname || initials;
+    })
+    .filter((name) => name.length > 0);
+}
+
 // Campo custom opcional (no estándar de BibTeX/BibLaTeX): lista de índices
 // 1-based de autores con contribución igualitaria, ej. "1,2". La fuente real
 // usada hoy (papers_source) no lo trae, así que hoy no produce asteriscos —
@@ -84,8 +99,12 @@ function toPublication(entry: Entry): Publication {
     type: entry.type,
     title: fields.title ?? "",
     authors: formatAuthors(fields),
+    apaAuthors: formatApaAuthors(fields),
     equalContribIndexes: parseEqualContrib(fields),
     venue: formatVenue(fields),
+    volume: fields.volume,
+    number: fields.number,
+    pages: fields.pages,
     year: formatYear(fields),
     abstract: fields.abstract || undefined,
     doi: fields.doi || undefined,
@@ -144,4 +163,96 @@ export function groupBySection(
     section,
     publications: publications.filter((publication) => publication.section === section),
   })).filter((group) => group.publications.length > 0);
+}
+
+function apaSentenceCase(title: string): string {
+  let firstWord = true;
+  return title.replace(/[\p{L}\p{N}][\p{L}\p{N}'’]*/gu, (word) => {
+    const formatted = firstWord
+      ? `${word[0].toLocaleUpperCase()}${word.slice(1).toLocaleLowerCase()}`
+      : /[A-Z].*[A-Z]/.test(word) || /[a-z][A-Z]/.test(word)
+        ? word
+        : word.toLocaleLowerCase();
+    firstWord = false;
+    return formatted;
+  });
+}
+
+function withPeriod(text: string): string {
+  return /[.!?]$/.test(text) ? text : `${text}.`;
+}
+
+function escapeHtml(text: string): string {
+  return text.replace(/[&<>"']/g, (character) => {
+    const entities: Record<string, string> = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
+    return entities[character];
+  });
+}
+
+function formatApaAuthorList(authors: string[]): string {
+  if (authors.length > 20) {
+    return `${authors.slice(0, 19).join(", ")}, …, ${authors[authors.length - 1]}`;
+  }
+  if (authors.length < 2) return authors[0] ?? "";
+  return `${authors.slice(0, -1).join(", ")}, & ${authors[authors.length - 1]}`;
+}
+
+export function formatApa7Citation(publication: Publication): { text: string; html: string } {
+  const authors = formatApaAuthorList(publication.apaAuthors);
+  const title = withPeriod(apaSentenceCase(publication.title));
+  const year = publication.year || "n.d.";
+  const doi = publication.doi?.trim().replace(/^https?:\/\/doi\.org\//i, "");
+  const url = publication.url?.match(/https?:\/\/\S+/)?.[0].replace(/[),.;]+$/, "");
+  const link = doi ? `https://doi.org/${doi}` : url;
+  const textParts = [authors, `(${year}).`];
+  const htmlParts = [...textParts].map(escapeHtml);
+
+  if (publication.section === "under_review") {
+    if (authors) {
+      textParts.push(`${title} [Manuscript under review].`);
+      htmlParts.push(`${escapeHtml(title)} [Manuscript under review].`);
+    }
+  } else if (publication.section === "conference") {
+    if (authors) {
+      textParts.push(`${title} [Conference presentation].`);
+      htmlParts.push(`${escapeHtml(title)} [Conference presentation].`);
+    } else {
+      textParts.push("[Conference presentation].");
+      htmlParts.push("[Conference presentation].");
+    }
+    if (publication.venue) {
+      textParts.push(`${publication.venue}.`);
+      htmlParts.push(`<em>${escapeHtml(publication.venue)}</em>.`);
+    }
+  } else {
+    if (authors) {
+      textParts.push(title);
+      htmlParts.push(escapeHtml(title));
+    }
+    if (publication.venue) {
+      const volume = publication.volume ? `, ${publication.volume}` : "";
+      const issue = publication.number ? `(${publication.number})` : "";
+      const pages = publication.pages ? `, ${publication.pages.replace(/--?/g, "–")}` : "";
+      textParts.push(`${publication.venue}${volume}${issue}${pages}.`);
+      htmlParts.push(
+        `<em>${escapeHtml(publication.venue)}${escapeHtml(volume)}</em>${escapeHtml(issue)}${escapeHtml(pages)}.`
+      );
+    }
+  }
+
+  if (link) {
+    textParts.push(link);
+    htmlParts.push(`<a href="${escapeHtml(link)}">${escapeHtml(link)}</a>`);
+  }
+
+  return {
+    text: textParts.filter(Boolean).join(" "),
+    html: `<p>${htmlParts.filter(Boolean).join(" ")}</p>`,
+  };
 }

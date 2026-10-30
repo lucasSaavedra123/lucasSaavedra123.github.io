@@ -50,12 +50,17 @@ const experienceGroups = EXPERIENCE_CATEGORIES.map((category) => ({
 
 const hasInterests = metadata.interests.length > 0;
 
+// Cobertura en medios, más reciente primero.
+const hasMedia = metadata.media.length > 0;
+const sortedMedia = [...metadata.media].sort((a, b) => b.date.localeCompare(a.date));
+
 // El índice omite las secciones que no tienen contenido todavía (hoy, Interests
 // mientras el usuario no la complete).
 const sections = [
   { id: "contact", label: t(locale, "cv.section.contact") },
   { id: "education", label: t(locale, "cv.section.education") },
   { id: "experience", label: t(locale, "cv.section.experience") },
+  ...(hasMedia ? [{ id: "media", label: t(locale, "cv.section.media") }] : []),
   { id: "skills", label: t(locale, "cv.section.skills") },
   { id: "certificates", label: t(locale, "cv.section.certificates") },
   { id: "courses", label: t(locale, "cv.section.courses") },
@@ -175,6 +180,30 @@ const sections = [
       ))
     }
   </section>
+
+  {
+    hasMedia && (
+      <section id="media" class="cv__section">
+        <h2>{t(locale, "cv.section.media")}</h2>
+        <ul class="timeline">
+          {sortedMedia.map((item) => (
+            <li class="timeline__entry">
+              <span class="timeline__date">{formatDate(item.date)}</span>
+              <div class="timeline__content">
+                <p class="timeline__title">
+                  <a href={item.url} target="_blank" rel="noopener noreferrer">
+                    {item.outlet}
+                  </a>{" "}
+                  <span class="media-type">({item.type})</span>
+                </p>
+                <p class="timeline__subtitle media-title">{item.title}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
 
   <section id="skills" class="cv__section">
     <h2>{t(locale, "cv.section.skills")}</h2>
@@ -375,6 +404,16 @@ const sections = [
   .timeline__highlights {
     margin: 0;
     padding-left: 1.1rem;
+  }
+
+  .media-type {
+    color: var(--text-muted);
+    font-weight: 400;
+    font-size: 0.9rem;
+  }
+
+  .media-title {
+    font-style: italic;
   }
 
   .skills-grid {

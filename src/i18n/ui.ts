@@ -32,6 +32,7 @@ const en = {
   "cv.section.skills": "Skills",
   "cv.section.certificates": "Certificates",
   "cv.section.courses": "Courses",
+  "cv.section.media": "Media Coverage",
   "cv.section.interests": "Interests",
   "cv.experience.research": "Research",
   "cv.experience.teaching": "Teaching",

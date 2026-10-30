@@ -65,6 +65,16 @@ export interface NewsItem {
   link?: string;
 }
 
+// Cobertura de prensa/medios de la investigación. Sección propia del CV (no se
+// mezcla con News). Los títulos se guardan en su idioma ORIGINAL, sin traducir.
+export interface MediaItem {
+  date: string; // "YYYY-MM-DD"
+  outlet: string; // ej. "Infobae"
+  type: string; // ej. "newspaper", "streaming, program #299"
+  title: string; // titular en su idioma original (o descripción breve)
+  url: string;
+}
+
 export interface Profile {
   personal: {
     full_name: string;
@@ -101,6 +111,7 @@ export interface Profile {
   certificates: Course[];
   courses: Course[];
   news: NewsItem[];
+  media: MediaItem[];
   cv_pdf_url: string;
   resume_pdf_url: string;
 }
@@ -373,6 +384,31 @@ export const profile: Profile = {
     { name: "CS50's Introduction to Artificial Intelligence with Python", institution: "Harvard, edX", date: "2020" },
   ],
   news: [],
+  media: [
+    {
+      date: "2025-09-22",
+      outlet: "Hagamos Lío",
+      type: "streaming, program #299",
+      title: "Neuroscience segment",
+      url: "https://www.youtube.com/watch?v=BKwfrr4AbMU",
+    },
+    {
+      date: "2025-09-10",
+      outlet: "Infobae",
+      type: "newspaper",
+      title:
+        "Por primera vez, científicos argentinos visualizaron en tiempo real un receptor clave vinculado al Alzheimer",
+      url: "https://www.infobae.com/salud/ciencia/2025/09/10/por-primera-vez-cientificos-argentinos-visualizaron-en-tiempo-real-un-receptor-clave-vinculado-al-alzheimer/",
+    },
+    {
+      date: "2025-09-10",
+      outlet: "Clarín",
+      type: "newspaper",
+      title:
+        "Con inteligencia artificial, científicos argentinos hicieron un importante hallazgo para el Alzheimer",
+      url: "https://www.clarin.com/sociedad/inteligencia-artificial-cientificos-argentinos-hicieron-importante-hallazgo-alzheimer_0_mN7pbZzY5K.html",
+    },
+  ],
   cv_pdf_url: "/cv/cv-en.pdf",
   resume_pdf_url: "/cv/resume-en.pdf",
 };
